@@ -59,7 +59,7 @@ def deploy():
     code_dir = '/srv/ves/Maitreya'
     with settings(warn_only=True):
         if run("test -d %s" % code_dir).failed:
-            run("git clone https://github.com/elemewanggao/Maitreya.git /srv/ves")
+            run("git clone https://github.com/elemewanggao/Maitreya.git %s" % code_dir)
     with cd(code_dir):
         run("git pull")
         print 'prod deploy success!'

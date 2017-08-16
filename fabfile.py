@@ -23,7 +23,7 @@ def git_add_and_commit():
     """git add & git commit."""
     local("git diff")
     if not confirm('Do you continue?'):
-        Abort('stop git!')
+        abort('stop git!')
     local("git add ~/git/Maitreya && git commit")
 
 

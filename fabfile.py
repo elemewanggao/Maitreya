@@ -6,7 +6,10 @@
 from __future__ import with_statement
 from fabric.api import *
 
-env.hosts = ['my_server']
+env.hosts = ['106.14.224.110']
+env.use_ssh_config = True
+env.keepalive = 60
+
 
 # def test():
 #     with settings(warn_only=True):
@@ -28,17 +31,17 @@ def git_push():
         local("git push --set-upstream origin develop")
 
 
-def pre_deploy():
+def pre_d():
     """git operation."""
     git_add_and_commit()
     git_push()
 
 
-def deploy():
-    code_dir = '/srv/django/myproject'
+def d():
+    code_dir = '/srv/ves/Maitreya'
     with settings(warn_only=True):
         if run("test -d %s" % code_dir).failed:
-            run("git clone user@vcshost:/path/to/repo/.git %s" % code_dir)
+            run("git clone https://github.com/elemewanggao/Maitreya.git %s" % code_dir)
     with cd(code_dir):
         run("git pull")
-        run("touch app.wsgi")
+        print 'prod deploy success!'

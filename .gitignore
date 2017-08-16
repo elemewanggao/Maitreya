@@ -1,0 +1,23 @@
+# python file
+.*.swp
+.*.swo
+*.pyc
+__pycache__
+.tox
+.project
+.pydevproject
+.settings/
+
+*.log
+
+# local config file
+local_config.py
+
+# editor and ide
+.ropeproject
+tags
+.DS_store
+.idea
+
+.commit
+.cache

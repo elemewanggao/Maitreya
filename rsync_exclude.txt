@@ -1,0 +1,19 @@
+# Directories
+.idea/
+.git/
+.ropeproject
+.DS_store
+
+#files
+local_config.py
+.python-version
+
+# cache
+.gitignore
+*.py[cod]
+*.log
+
+# testfiles
+Makefile
+tests/
+gen_devconfig.py

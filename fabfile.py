@@ -21,7 +21,10 @@ env.keepalive = 60
 
 def git_add_and_commit():
     """git add & git commit."""
-    local("git add ~/git/Maitreya -p && git commit")
+    local("git diff")
+    if not confirm('Do you continue?'):
+        Abort('stop git!')
+    local("git add ~/git/Maitreya && git commit")
 
 
 def git_push():

@@ -5,8 +5,9 @@
 '''
 from __future__ import with_statement
 from fabric.api import *
+from fabric.contrib.console import confirm
 
-env.hosts = ['106.14.224.110']
+env.hosts = ['root@106.14.224.110']
 env.use_ssh_config = True
 env.keepalive = 60
 
@@ -38,7 +39,11 @@ def pre_d():
 
 
 def d():
-    code_dir = '/srv/ves/Maitreya'
+    if not confirm('You are ready to deploy in production environment.'
+                   'Do your code has pushed master?'):
+        abort('stop deploy beacuse your code not push to master!')
+
+    code_dir = '/srv/ves/Maitreya/Maitreya'
     with settings(warn_only=True):
         if run("test -d %s" % code_dir).failed:
             run("git clone https://github.com/elemewanggao/Maitreya.git %s" % code_dir)

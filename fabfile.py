@@ -39,7 +39,16 @@ def git():
     git_push()
 
 
-def d():
+def merge_to_master(branch='develop'):
+    """将指定分支merge到master分支."""
+    local("git checkout master")
+    local("git merge {branch}".format(branch=branch))
+    local("git push")
+    local("git checkout {branch}".format(branch=branch))
+
+
+def deploy():
+    """deploy in production environment."""
     if not confirm('You are ready to deploy in production environment.'
                    'Do your code has pushed master?'):
         abort('stop deploy beacuse your code not push to master!')

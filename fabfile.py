@@ -21,7 +21,7 @@ env.keepalive = 60
 
 def git_add_and_commit():
     """git add & git commit."""
-    local("git add ~/git/Maitreya && git commit")
+    local("git add ~/git/Maitreya -p && git commit")
 
 
 def git_push():
@@ -32,8 +32,9 @@ def git_push():
         local("git push --set-upstream origin develop")
 
 
-def pre_d():
+def git():
     """git operation."""
+    print 'pushing code to origin branch!'
     git_add_and_commit()
     git_push()
 

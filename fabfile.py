@@ -61,5 +61,6 @@ def deploy():
         if run("test -d %s" % code_dir).failed:
             run("git clone https://github.com/elemewanggao/Maitreya.git %s" % code_dir)
     with cd(code_dir):
-        run("git pull")
+        run("git fetch --all")
+        run("git reset --hard origin/master")
         print 'prod deploy success!'

@@ -58,7 +58,7 @@ def deploy():
 
     code_dir = '/srv/ves/Maitreya'
     vevs_addr = '/srv/ves/Maitreya/.venv/bin/activate'
-    vevs_package = '%s/requirements.txt'
+    vevs_package = '%s/requirements.txt' % code_dir
     with settings(warn_only=True):
         if run("test -d %s" % code_dir).failed:
             run("git clone https://github.com/elemewanggao/Maitreya.git %s" % code_dir)

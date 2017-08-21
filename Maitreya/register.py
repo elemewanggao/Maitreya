@@ -84,8 +84,6 @@ def api(rule='/', **options):
                 finally:
                     log_type_signal_map[log_type](api_ctx)
 
-            log_info.send(api_ctx)
-
             return api_ctx.response
 
         return wrapper

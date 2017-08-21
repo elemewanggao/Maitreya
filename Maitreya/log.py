@@ -5,11 +5,9 @@ import time
 import logging
 
 
-class Logger(object):
-
-    def get_logger(self, name):
-        """获取日志对象."""
-        return logging.getLogger(name)
+def get_logger(name):
+    """获取日志对象."""
+    return logging.getLogger(name)
 
 
 def get_request_args(ctx, include=None, exclude=None):
@@ -91,5 +89,3 @@ def log_error(ctx):
            ' => {ctx.module}.{call} => {ctx.response.status_code}')
     return log.error(fmt.format(ctx=ctx, call=ctx.func.__name__, url=url,
                                 req_data=req_data), exc_info=True)
-
-get_logger = Logger().get_logger

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from blinker import signal
-from .log import log
+import log
 
 
 sig_call_done = signal(2000)

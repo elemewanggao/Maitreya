@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from werkzeug.exceptions import BadRequest
 import time
 import logging
 
@@ -12,49 +12,84 @@ class Logger(object):
         return logging.getLogger(name)
 
 
-class LogApi(Logger):
-    """记录API日志."""
+def get_request_args(ctx, include=None, exclude=None):
+    default_include = ('args', 'json', 'form', 'data')
+    if include is None:
+        include = default_include
+    if exclude is not None:
+        include = include - exclude
 
-    def log_init(self, api):
-        self.logger = self.get_logger(api.module)
-        self.url = api.req.url[len(api.req.url_root) - 1:]
-        self.req_data = api.get_request_args()
-        self.time = (time.time() - api.started_at) * 1000  # ms
+    args_dict = {}
+    if 'args' in include:
+        if ctx.req.args:
+            args_dict['args'] = ctx.req.args.to_dict()
+    if 'json' in include:
+        try:
+            if ctx.req.json:
+                args_dict['json'] = ctx.req.json
+        except BadRequest:
+            pass
+    if 'form' in include:
+        if ctx.req.form:
+            args_dict['form'] = ctx.req.form
+    if 'data' in include:
+        if ctx.req.data:
+            args_dict['data'] = ctx.req.data
+    if 'headers' in include:
+        if ctx.req.headers:
+            args_dict['headers'] = ctx.req.headers
+    if 'cookies' in include:
+        if ctx.req.cookies:
+            args_dict['cookies'] = ctx.req.cookies
+    return args_dict
 
-    def log_api_info(self, api):
-        self.log_init(api)
-        """正常API日志,包含请求和响应."""
-        fmt = ('user:{api.user} {api.req.method} {url} {req_data}'
-               ' => {api.module}.{call} => {api.response.status_code}'
-               ' => {timed:.3f}ms')
 
-        return self.logger.info(fmt.format(api=api, call=api.func.__name__, url=self.url,
-                                           timed=self.time, req_data=self.req_data))
+def log_info(ctx):
+    log = logging.getLogger(name=ctx.module)
+    timed = (time.time() - ctx.started_at) * 1000  # ms
+    url = ctx.req.url[len(ctx.req.url_root) - 1:]
 
-    def log_request_info(self, api):
-        self.log_init(api)
-        """正常请求日志."""
-        fmt = ('user:{api.user} {api.req.method} {url} {req_data}'
-               ' => {api.module}.{call}')
-        return self.logger.info(fmt.format(api=api, call=api.func.__name__, url=self.url,
-                                           req_data=self.req_data))
+    req_data = get_request_args(ctx)
 
-    def log_warn(self, api):
-        """警告日志"""
-        self.log_init(api)
-        fmt = ('user:{api.user} {api.req.method} {url} {req_data}'
-               ' => {api.module}.{call} => {api.response.status_code}')
-        return self.logger.warn(fmt.format(api=api, call=api.func.__name__, url=self.url,
-                                           req_data=self.req_data), exc_info=True)
+    fmt = ('{ctx.req.method} {url} {req_data}'
+           ' => {ctx.module}.{call} => {ctx.response.status_code}'
+           ' => {timed:.3f}ms')
 
-    def log_error(self, api):
-        self.log_init(api)
-        """错误日志."""
-        fmt = ('user:{api.user} {api.req.method} {url} {req_data}'
-               ' => {api.module}.{call} => {api.response.status_code}')
-        return self.logger.error(fmt.format(api=api, call=api.func.__name__, url=self.url,
-                                            req_data=self.req_data), exc_info=True)
+    return log.info(fmt.format(ctx=ctx, call=ctx.func.__name__, url=url,
+                               timed=timed, req_data=req_data))
 
+
+def log_request_info(ctx):
+    log = logging.getLogger(name=ctx.module)
+    url = ctx.req.url[len(ctx.req.url_root) - 1:]
+
+    req_data = get_request_args(ctx)
+
+    fmt = ('{ctx.req.method} {url} {req_data}'
+           ' => {ctx.module}.{call}')
+    return log.info(fmt.format(ctx=ctx, call=ctx.func.__name__, url=url,
+                               req_data=req_data))
+
+
+def log_warn(ctx):
+    log = logging.getLogger(name=ctx.module)
+    url = ctx.req.url[len(ctx.req.url_root) - 1:]
+    req_data = get_request_args(ctx)
+
+    fmt = ('{ctx.req.method} {url} {req_data}'
+           ' => {ctx.module}.{call} => {ctx.response.status_code}')
+    return log.warn(fmt.format(ctx=ctx, call=ctx.func.__name__, url=url,
+                               req_data=req_data), exc_info=True)
+
+
+def log_error(ctx):
+    log = logging.getLogger(name=ctx.module)
+    url = ctx.req.url[len(ctx.req.url_root) - 1:]
+    req_data = get_request_args(ctx)
+
+    fmt = ('{ctx.req.method} {url} {req_data}'
+           ' => {ctx.module}.{call} => {ctx.response.status_code}')
+    return log.error(fmt.format(ctx=ctx, call=ctx.func.__name__, url=url,
+                                req_data=req_data), exc_info=True)
 
 get_logger = Logger().get_logger
-log = LogApi()

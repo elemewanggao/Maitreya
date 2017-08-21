@@ -7,7 +7,7 @@ def hello(hello='hello'):
 
 
 common_conf = [
-    Url('/hello', lambda: {'result': 'hi'}),
+    Url('/hello', lambda: {'result': 'ni hao!'}),
     Url('/<string:hello>', hello)]
 
 

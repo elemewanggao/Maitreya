@@ -6,7 +6,12 @@ import sys
 from functools import wraps
 from flask import request
 from .api import ApiCtx
-from .log import get_logger
+from .log import (
+    get_logger,
+    log_request_info,
+    log_info,
+    log_warn,
+    log_error)
 from Maitreya.exception import (
     UserExc,
     SysExc,
@@ -16,26 +21,16 @@ from .response import (
     make_res,
     make_exc_res,
 )
-from .signal import (
-    sig_call_ok,
-    sig_call_done,
-    sig_call_user_exc,
-    sig_call_sys_exc,
-    sig_call_unexcepted_exc,
-    sig_call_req,
-    sig_call_final,
-    sig_call_custom_exc,
-)
 
-from flask import current_app, g
+from flask import current_app
 
 buildin_methods = ["get", "gets", "post", "put", "patch", "upload", "delete"]
 log_type_signal_map = {
-    'user_exc': sig_call_user_exc,
-    'sys_exc': sig_call_sys_exc,
-    'unexcepted_exc': sig_call_unexcepted_exc,
-    'ok': sig_call_ok,
-    'custom_exc': sig_call_custom_exc,
+    'user_exc': log_warn,
+    'sys_exc': log_error,
+    'unexcepted_exc': log_error,
+    'ok': log_info,
+    'custom_exc': log_warn,
 }
 
 
@@ -58,12 +53,12 @@ def api(rule='/', **options):
             api_ctx.started_at = time.time()
             module_name = func.func_globals['__name__']
             api_ctx.module = module_name
-            sig_call_req.send(api_ctx)
+            log_request_info(api_ctx)
 
             if request.method == 'OPTIONS':
                 response = current_app.make_default_options_response()
                 api_ctx.response = make_res(response)
-                sig_call_ok.send(api_ctx)
+                log_info(api_ctx)
             else:
                 try:
                     rv = func(*args, **kwargs)
@@ -87,12 +82,9 @@ def api(rule='/', **options):
                     api_ctx.response = make_res(rv)
                     log_type = 'ok'
                 finally:
-                    api_ctx.user = g.user.email.split('@')[0] if hasattr(g, 'user') else None
-                    api_ctx.logger = g.logger if hasattr(g, 'logger') else None
-                    log_type_signal_map[log_type].send(api_ctx)
-                    sig_call_final.send(api_ctx)
+                    log_type_signal_map[log_type](api_ctx)
 
-            sig_call_done.send(api_ctx)
+            log_info.send(api_ctx)
 
             return api_ctx.response
 

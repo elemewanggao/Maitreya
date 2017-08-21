@@ -57,10 +57,19 @@ def deploy():
         abort('stop deploy beacuse your code not push to master!')
 
     code_dir = '/srv/ves/Maitreya'
+    vevs_addr = '/srv/ves/Maitreya/.venv/bin/activate'
+    vevs_package = '%s/requirements.txt'
     with settings(warn_only=True):
         if run("test -d %s" % code_dir).failed:
             run("git clone https://github.com/elemewanggao/Maitreya.git %s" % code_dir)
     with cd(code_dir):
         run("git fetch --all")
         run("git reset --hard origin/master")
-        print 'prod deploy success!'
+        print 'prod code update successfully!'
+        run("source %s" % vevs_addr)
+        print 'enter virtual environment successfully!'
+        run("pip install -r %s" % vevs_package)
+        print 'install package successfully!'
+        run('supervisorctl restart Maitreya')
+        print 'restart Maitreya successfully!'
+    print 'prod deploy successfully!'

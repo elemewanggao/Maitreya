@@ -36,3 +36,6 @@ LOGGING = {
         }
     }
 }
+
+DEBUG = False
+

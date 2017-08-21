@@ -6,9 +6,14 @@ def hello(hello='hello'):
     return hello
 
 
+def test():
+    return 'test your code!'
+
+
 common_conf = [
     Url('/hello', lambda: {'result': 'ni hao!'}),
-    Url('/<string:hello>', hello)]
+    Url('/<string:hello>', hello),
+    Url('/test/code', test)]
 
 
 # 新增路由需要在此注册

@@ -1,12 +1,32 @@
 # -*- coding:utf-8 -*-
 """URL管理器."""
+import requests
+from bs4 import BeautifulSoup
 
 
 class Url(object):
     """url"""
-    def __init__(self, url, method='GET', cookie='', user='', passport=''):
+    request_method_handler_map = {
+            'GET': requests.get,
+            'POST': requests.post,
+            'PUT': requests.put,
+            'DELETE': requests.delete,
+            'HEAD': requests.head,
+            'OPTIONS': requests.options
+            }
+
+    def __init__(self, url, method='GET', params={}, header={}, data={}, json={}, cookie='', user='', passport=''):
         """初始化URL"""
-        pass
+        self.url = url
+        self.method = method
+        self.params = params
+        self.header = header
+        self.data = data
+        self.json = json
+        self.cookie = cookie
+        self.user = user
+        self.passport = passport
+        self.request_handler = self.request_method_handler_map.get(self.method)
 
     def set_crawl_method(self):
         """设置URL爬取方式."""
@@ -18,11 +38,14 @@ class Url(object):
 
     def download(self):
         """根据URL信息进行下载,返回下载网页内容."""
-        pass
+        response = self.request_handler(self.url, params=self.params, headers=self.header, data=self.data, json=self.json)
+        return response.text
 
     def parse(self):
         """根据下载器下载的内容和URL爬取方式进行解析,解析结果为:标题，内容（包括图片），日期，出处, 标签"""
-        pass
+        text = self.download()
+        content = BeautifulSoup(text, "lxml")
+        """to do""" 
 
 
 class UrlManager(object):

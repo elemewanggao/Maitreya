@@ -37,5 +37,37 @@ LOGGING = {
     }
 }
 
-DEBUG = False
+# 数据库设置
+MYSQL = {
+    'merchant_clear': {
+        'user': 'root',
+        'passwd': 'root',
+        'host': 'localhost',
+        'port': 3306,
+        'db': 'talaris_merchant_clear',
+    },
+    'team_clear': {
+        'user': 'root',
+        'passwd': 'root',
+        'host': 'localhost',
+        'port': 3306,
+        'db': 'talaris_team_clear',
+    },
+    'data_center_clear': {
+        'user': 'root',
+        'passwd': 'root',
+        'host': 'localhost',
+        'port': 3306,
+        'db': 'lpd_data_center'
+    },
+    'ares_icon': {
+        'user': 'root',
+        'passwd': 'root',
+        'host': 'localhost',
+        'port': 3306,
+        'db': 'ares',
+    }
+}
 
+
+DEBUG = False

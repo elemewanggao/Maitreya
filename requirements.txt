@@ -7,3 +7,5 @@ blinker==1.4
 beautifulsoup4==4.6.0
 lxml==3.8.0
 html5lib
+SQLAlchemy==0.9.3
+PyMySQL==0.6.6

@@ -1,6 +1,6 @@
 # -*-coding:utf-8 -*-
 from flask import Blueprint
-from utils.decorator import api
+from Maitreya.utils.decorator import api
 
 test = Blueprint('test', __name__)
 

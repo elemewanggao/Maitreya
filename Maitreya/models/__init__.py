@@ -5,6 +5,7 @@ import functools
 from contextlib import contextmanager
 from collections import Iterable
 from sqlalchemy import create_engine
+from sqlalchemy.sql import func
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from Maitreya.settings import MYSQL, DEBUG
@@ -32,7 +33,7 @@ def get_session(db):
 
 
 @contextmanager
-def Db_session(db='ares', commit=True):
+def Db_session(db='matreya', commit=True):
     """db session封装.
 
     :params db:数据库名称
@@ -91,31 +92,6 @@ class BaseModel(object):
             MerchantBillDetail.batch_add(a)
         """
         return session.add_all(objs)
-
-    @classmethod
-    def _init_cached_fields(cls):
-        if not getattr(cls, '_cached_fields', None):
-            class_ = cls
-            class_._cached_fields = [attr for attr in dir(class_)
-                                     if isinstance(getattr(class_, attr),
-                                                   InstrumentedAttribute)]
-
-    @classmethod
-    @class_dbsession(True)
-    def fast_batch_add(cls, session, objs):
-        """批量增加.
-
-        eg: a = [MerchantBillDetail(id=1), MerchantBillDetail(id=2)]
-            MerchantBillDetail.batch_add(a)
-        """
-        cls._init_cached_fields()
-        return session.execute(
-            cls.__table__.insert(),
-            [{
-                k: getattr(obj, k)
-                for k in cls._cached_fields if getattr(obj, k) is not None
-            } for obj in objs]
-        )
 
     @classmethod
     @class_dbsession(True)

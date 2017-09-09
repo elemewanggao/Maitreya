@@ -46,26 +46,12 @@ MYSQL = {
         'port': 3306,
         'db': 'talaris_merchant_clear',
     },
-    'team_clear': {
+    'matreya': {
         'user': 'root',
-        'passwd': 'root',
-        'host': 'localhost',
+        'passwd': 'Matreya0823',
+        'host': 'rm-uf62lyv4wyh90h67oo.mysql.rds.aliyuncs.com',
         'port': 3306,
-        'db': 'talaris_team_clear',
-    },
-    'data_center_clear': {
-        'user': 'root',
-        'passwd': 'root',
-        'host': 'localhost',
-        'port': 3306,
-        'db': 'lpd_data_center'
-    },
-    'ares_icon': {
-        'user': 'root',
-        'passwd': 'root',
-        'host': 'localhost',
-        'port': 3306,
-        'db': 'ares',
+        'db': 'matreya',
     }
 }
 
